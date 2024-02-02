@@ -1,0 +1,5 @@
+GET http://127.0.0.1:8000/Guest/test_token/
+Content-Type: application/json
+Authorization: Token b3c5c83a9938f402f89f1f7462acc3549d1b7676
+
+{}
