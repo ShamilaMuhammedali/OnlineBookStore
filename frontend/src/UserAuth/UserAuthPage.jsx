@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import './UserAuthPage.css';
+import axios from 'axios';
 
 const UserAuthPage = () => {
   const [username, setUsername] = useState('');
@@ -12,18 +12,33 @@ const UserAuthPage = () => {
     setIsLogin(!isLogin);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here, you can implement form submission logic, such as sending data to the backend for authentication.
-    if (isLogin) {
-      console.log('Logging in...');
-      console.log('Email:', email);
-      console.log('Password:', password);
-    } else {
-      console.log('Registering...');
-      console.log('Username:', username);
-      console.log('Email:', email);
-      console.log('Password:', password);
+
+    try {
+      if (isLogin) {
+        console.log('Logging in...');
+        console.log('Email:', email);
+        console.log('Password:', password);
+        const response = await axios.post('http://127.0.0.1:8000/Guest/login/', {
+          username,
+          password,
+        });
+        console.log(response.data); 
+      } else {
+        console.log('Registering...');
+        console.log('Username:', username);
+        console.log('Email:', email);
+        console.log('Password:', password);
+        const response = await axios.post('http://127.0.0.1:8000/Guest/signup/', {
+          username,
+          email,
+          password,
+        });
+        console.log(response.data); 
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 
@@ -31,7 +46,6 @@ const UserAuthPage = () => {
     <div className="form-container">
       <h2>{isLogin ? 'Login' : 'Register'}</h2>
       <form onSubmit={handleSubmit}>
-        {!isLogin && (
           <div className="form-group">
             <label className="form-label">Username:</label>
             <input
@@ -41,7 +55,7 @@ const UserAuthPage = () => {
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-        )}
+         {!isLogin && (
         <div className="form-group">
           <label className="form-label">Email:</label>
           <input
@@ -51,6 +65,7 @@ const UserAuthPage = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
+        )}
         <div className="form-group">
           <label className="form-label">Password:</label>
           <input
