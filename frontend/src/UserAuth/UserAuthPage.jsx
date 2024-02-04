@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import './UserAuthPage.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const UserAuthPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
 
   const handleToggleAuthMode = () => {
     setIsLogin(!isLogin);
@@ -17,25 +19,20 @@ const UserAuthPage = () => {
 
     try {
       if (isLogin) {
-        console.log('Logging in...');
-        console.log('Email:', email);
-        console.log('Password:', password);
         const response = await axios.post('http://127.0.0.1:8000/Guest/login/', {
           username,
           password,
         });
-        console.log(response.data); 
+        sessionStorage.setItem("uid",response.data.token);
+
+        navigate('/booklist');
       } else {
-        console.log('Registering...');
-        console.log('Username:', username);
-        console.log('Email:', email);
-        console.log('Password:', password);
         const response = await axios.post('http://127.0.0.1:8000/Guest/signup/', {
           username,
           email,
           password,
         });
-        console.log(response.data); 
+        navigate('/');
       }
     } catch (error) {
       console.error('Error:', error);
