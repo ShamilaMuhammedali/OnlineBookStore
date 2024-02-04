@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect
 
 from Admin.models import Book, Orders, Cart
+from Admin.serializers import BookSerializer
+
 
 from .serializers import GenreSerializer, MyOrderItemSerializer, MyOrderSerializer, OrderItemSerializer, OrderSerializer
 from django.http import JsonResponse
@@ -26,6 +28,22 @@ def postBookByGenre(request, genreSearch):
     book = Book.objects.filter(book_genre=genreSearch)
     serializer = GenreSerializer(book, many=True)
     return Response(serializer.data)
+
+
+
+
+@api_view(['GET'])
+def add_to_cart(request,bid):
+    try:
+        book=Book.objects.get(id=bid)
+    except Book.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method=="GET":
+        serializer=BookSerializer(book,data=request.data)
+        return checkout()
+        #return Response(serializer.data,status=status.HTTP_205_RESET_CONTENT)
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
 
 
 

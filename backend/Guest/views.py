@@ -38,7 +38,7 @@ def signup(request):
 
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def login(request):
     user = get_object_or_404(User, username=request.data['username'])
     if not user.check_password(request.data['password']):
