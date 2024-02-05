@@ -6,3 +6,7 @@ urlpatterns = [
     path('books/<int:bid>',views.book_opns,name="Books"),
     
 ]
+
+
+
+

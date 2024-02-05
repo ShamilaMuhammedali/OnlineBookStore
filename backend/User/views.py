@@ -15,6 +15,9 @@ from django.http import Http404
 
 import stripe
 from django.conf import settings
+# from django.http import HttpRequest
+# from django.http import HttpResponse
+# from rest_framework.request import Request
 
 from rest_framework.authtoken.models import Token 
 from django.contrib.auth.models import User   
@@ -40,8 +43,9 @@ def add_to_cart(request,bid):
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method=="GET":
         serializer=BookSerializer(book,data=request.data)
-        return checkout()
-        #return Response(serializer.data,status=status.HTTP_205_RESET_CONTENT)
+        
+        checkout_result = checkout(request, serializer)
+        return checkout_result
     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -51,7 +55,7 @@ def add_to_cart(request,bid):
 @api_view(['POST'])
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
-def checkout(request):
+def checkout(request,format=None):
     serializer = OrderSerializer(data=request.data)
 
     if serializer.is_valid():
