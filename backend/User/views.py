@@ -1,9 +1,6 @@
 from django.shortcuts import render,redirect
-
 from Admin.models import Book, Orders, Cart
 from Admin.serializers import BookSerializer
-
-
 from .serializers import GenreSerializer, MyOrderItemSerializer, MyOrderSerializer, OrderItemSerializer, OrderSerializer
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, authentication_classes, permission_classes         
@@ -12,18 +9,19 @@ from rest_framework.response import Response
 from rest_framework import status, authentication, permissions
 from rest_framework.views import APIView
 from django.http import Http404
-
 import stripe
 from django.conf import settings
-# from django.http import HttpRequest
-# from django.http import HttpResponse
-# from rest_framework.request import Request
 
 from rest_framework.authtoken.models import Token 
 from django.contrib.auth.models import User   
 
 
-# Create your views here.
+
+@api_view(['GET'])
+def BookSearch(request):
+    book=Book.objects.all()
+    serializer = GenreSerializer(book, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])
@@ -31,8 +29,6 @@ def postBookByGenre(request, genreSearch):
     book = Book.objects.filter(book_genre=genreSearch)
     serializer = GenreSerializer(book, many=True)
     return Response(serializer.data)
-
-
 
 
 @api_view(['GET'])
@@ -48,9 +44,6 @@ def add_to_cart(request,bid):
         return checkout_result
     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-
-
-
 
 @api_view(['POST'])
 @authentication_classes([authentication.TokenAuthentication])
